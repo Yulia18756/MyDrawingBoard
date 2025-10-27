@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Спільна Дошка 💖</title>
+    <style>
+        /* 1. Загальні стилі */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f0f4f8; /* М'який фон */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden; 
+        }
+
+        
+        .app-container {
+            display: flex;
+            flex-direction: row;
+            gap: 15px;
+        }
+
+        
+        .toolbar {
+            background-color: #ffffff;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+            .toolbar button {
+                background-color: #f8f9fa;
+                border: 1px solid #e9ecef;
+                border-radius: 8px;
+                padding: 10px;
+                font-size: 24px; 
+                line-height: 1;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+                .toolbar button:hover {
+                    background-color: #e9ecef;
+                }
+
+                
+                .toolbar button.active {
+                    background-color: #cce5ff; 
+                    border-color: #007bff;
+                    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+                }
+
+        
+        .tool-group {
+            border-top: 1px solid #e9ecef;
+            padding-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+            .tool-group label {
+                font-size: 12px;
+                font-weight: 500;
+                color: #555;
+            }
+
+       
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+        }
+
+        input[type="color"] {
+            width: 100%;
+            height: 30px;
+            border: none;
+            background: none;
+            padding: 0;
+            cursor: pointer;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        
+        #drawingBoard {
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 12px; 
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            
+            cursor: default;
+            touch-action: none;
+        }
+
+        
+        .text-input-overlay {
+            position: absolute;
+            background: #fffffe;
+            border: 1px dashed #007bff;
+            z-index: 10;
+            outline: none;
+            border-radius: 4px;
+            padding: 2px 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+
+        <div class="toolbar">
+            <button id="selectBtn" title="Курсор/Виділити">👆</button>
+            <button id="pencilBtn" title="Олівець">✏️</button>
+            <button id="eraserBtn" title="Гумка">🧼</button>
+
+            <div class="tool-group">
+                <button id="rectBtn" title="Прямокутник">⬜</button>
+                <button id="lineBtn" title="Лінія">➖</button>
+                <button id="arrowBtn" title="Стрілка">➡️</button>
+                <button id="textBtn" title="Текст">Aa</button>
+            </div>
+
+            <div class="tool-group">
+                <label for="colorPicker">Колір</label>
+                <input type="color" id="colorPicker" value="#FF0000">
+
+                <label for="lineWidth">Розмір</label>
+                <input type="range" id="lineWidth" min="1" max="20" value="3">
+            </div>
+        </div>
+
+        <canvas id="drawingBoard" width="800" height="600"></canvas>
+
+    </div>
+
+    <script src="client.js"></script>
+</body>
+</html>
