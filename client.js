@@ -1,5 +1,9 @@
 ﻿
-const socket = new WebSocket('ws://localhost:8080');
+
+const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+
+
+const socket = new WebSocket(`${protocol}//${window.location.host}`);
 
 const colorPicker = document.getElementById('colorPicker');
 const lineWidthInput = document.getElementById('lineWidth');

@@ -1,11 +1,26 @@
 ﻿
 const WebSocket = require('ws');
+const express = require('express');
+const http = require('http');
+const path = require('path');
 
-const wss = new WebSocket.Server({ port: 8080 });
+const app = express();
+const server = http.createServer(app); 
+const wss = new WebSocket.Server({ server }); 
 
 let drawingHistory = [];
+const PORT = 8080;
 
-console.log('Сервер WebSocket запущено на порту 8080'); 
+console.log('Сервер WebSocket v10 (Webserver + Resize) запущено на порту 8080');
+
+
+app.use(express.static(path.join(__dirname)));
+
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 
 function broadcastToOthers(data, sender) {
     wss.clients.forEach(client => {
@@ -23,38 +38,23 @@ wss.on('connection', ws => {
         const messageString = message.toString();
         let dataObject;
 
-        try {
-            dataObject = JSON.parse(messageString);
-        } catch (e) { console.error("Помилка парсингу JSON:", e); return; }
+        try { dataObject = JSON.parse(messageString); }
+        catch (e) { console.error("Помилка парсингу JSON:", e); return; }
 
-    
         if (['draw', 'erase', 'rect', 'text', 'line', 'arrow'].includes(dataObject.type)) {
             drawingHistory.push(dataObject);
             broadcastToOthers(messageString, ws);
-
         } else if (dataObject.type === 'move') {
-          
             let objToMove = drawingHistory.find(item => item.id === dataObject.id);
-            if (objToMove) {
-                Object.assign(objToMove, dataObject.newCoords);
-            }
+            if (objToMove) { Object.assign(objToMove, dataObject.newCoords); }
             broadcastToOthers(messageString, ws);
-
-          
         } else if (dataObject.type === 'resize') {
             let objToResize = drawingHistory.find(item => item.id === dataObject.id);
-            if (objToResize) {
-                Object.assign(objToResize, dataObject.newDimensions); 
-            }
+            if (objToResize) { Object.assign(objToResize, dataObject.newDimensions); }
             broadcastToOthers(messageString, ws);
-
         } else if (dataObject.type === 'cursor') {
             if (!ws.id) { ws.id = dataObject.id; }
-            const cursorUpdate = {
-                type: 'cursor_update',
-                id: ws.id,
-                x: dataObject.x, y: dataObject.y, tool: dataObject.tool
-            };
+            const cursorUpdate = { type: 'cursor_update', id: ws.id, x: dataObject.x, y: dataObject.y, tool: dataObject.tool };
             broadcastToOthers(JSON.stringify(cursorUpdate), ws);
         }
     });
@@ -70,4 +70,9 @@ wss.on('connection', ws => {
             });
         }
     });
+});
+
+
+server.listen(PORT, () => {
+    console.log(`HTTP-сервер слухає на http://localhost:${PORT}`);
 });
